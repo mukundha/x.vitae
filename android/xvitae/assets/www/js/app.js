@@ -12,7 +12,14 @@ for (var i = 0; i < series; i++) {
 
 $(document).ready(function(){
 
-	
+
+	document.addEventListener('deviceready', onDeviceReady,false);
+    document.addEventListener('push-notification', function(event) {
+    	console.log(JSON.stringify(event));
+       console.log('push-notification!:'+JSON.stringify(event.notification.message));
+       navigator.notification.alert(event.notification.message);
+   });
+    
 	$('#label-people').on('click',function(){
 		
 		$('#label-people').removeClass('jobClicked_people');
@@ -220,3 +227,104 @@ function drawFlotChart(){
 // 				        chart.draw(data, options);
 // 					$.mobile.changePage('#page-pie-chart');
 // }
+
+//function onDeviceReady(){
+//	console.log('device ready');
+//    var pushNotification = window.pushNotification;
+//    var gcmOptions = {
+//        gcmSenderId:"460281438122"
+//    };
+//    pushNotification.registerDevice(gcmOptions, function(device){
+//    	console.log("Registered with Google");
+//        var options = {
+//        		provider:"apigee",
+//                orgName:"mukundha",
+//                appName:"movies",
+//                notifier:"google",
+//            deviceId:device.deviceId
+//        };
+//
+//        console.log("Device ID is " + device.deviceId);
+//        console.log(JSON.stringify(options));
+//        
+//        pushNotification.registerWithPushProvider(options, function(result){
+//        	
+//        	pushNotification.getApigeeDeviceId(function(deviceresult){
+//        		console.log(JSON.stringify(deviceresult));
+//                deviceid =deviceresult.deviceid;
+//                console.log('Got device ID - ' + deviceid);
+//        	});
+//        })
+//    });
+//}
+
+function onDeviceReady(){
+	console.log('device ready');
+    var pushNotification = window.pushNotification;
+    var gcmOptions = {
+        gcmSenderId:"332156248130"
+    };
+    pushNotification.registerDevice(gcmOptions, function(device){
+    	console.log("Registered with Google");
+        var options = {
+        		provider:"apigee",
+                orgName:"x-vitae",
+                appName:"vitae",
+                notifier:"google",
+            deviceId:device.deviceId
+        };
+
+        console.log("Device ID is " + device.deviceId);
+        console.log(JSON.stringify(options));
+        var p = 'http://data-cosafinity.apigee.net:8000/test?notifier=' + device.deviceId;
+        makeAjax(p, "GET", function(resp){
+        	console.log('success');
+        }, null, false);
+        
+//        pushNotification.registerWithPushProvider(options, function(result){
+//        	
+//        	pushNotification.getApigeeDeviceId(function(deviceresult){
+//        		console.log(JSON.stringify(deviceresult));
+//                deviceid =deviceresult.deviceid;
+//                console.log('Got device ID - ' + deviceid);
+//        	});
+//        })
+    });
+}
+
+function makeAjax (path, method, callback,postdata,needjson){
+	var request = new XMLHttpRequest();
+	console.log(path);
+	request.onreadystatechange=state_change;
+	request.open(method, path, true);
+	
+	if ( method=="POST"){
+		request.send(postdata);
+	}else{
+		request.send(null);
+	}
+	    function state_change()
+		{
+		if (request.readyState==4)
+		  {// 4 = "loaded"
+			  if (request.status==200)
+			    {
+			    	try{
+
+			    		var resp = eval("(" + request.responseText + ")")
+			    	}catch(err){
+			    		console.log(request.responseText);
+			    		console.log(err);
+			    		callback({error:true});
+			    	}	
+			    	callback(resp);
+			    }
+			    else{
+			    	console.log('error '  + request.statusText);
+			    	callback({error:true});
+			    }
+
+			}
+		}
+}
+

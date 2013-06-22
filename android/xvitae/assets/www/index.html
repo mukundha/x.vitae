@@ -22,6 +22,9 @@
 		}
 	</style>
 	<!-- <script src='cordova-2.7.0.js'></script> -->
+	<script type="text/javascript" src="cordova-2.6.0.js"></script>
+	<script type="text/javascript" src="PushNotification.js"></script>
+	
 	<script src="js/jquery.min.js"></script>
 	<script src="js/leaflet.js"></script>
 	
@@ -35,16 +38,7 @@
 	<!--[if lte IE 8]><link rel="stylesheet" href="../dist/leaflet.ie.css" /><![endif]-->
 </head>
 <body>
-	<div data-role='page' id='page-landing'>
-		<div data-role='content' id='content-landing'>
-			<div class='people people-init' id='label-people'>
-				<center><h1>People</h1></center>
-			</div>
-			<div class='job job-init' id='label-job'>
-				<center><h1>Job</h1></center>
-			</div>
-		</div>
-	</div>
+	
 	
 	<div data-role="page" id='page-home'>
 
@@ -146,5 +140,16 @@
 			
 		</div>	
 	</div>
+	
+	<div data-role='page' id='page-landing'>
+		<div data-role='content' id='content-landing'>
+			<div class='people people-init' id='label-people'>
+				<center><h1>People</h1></center>
+			</div>
+			<div class='job job-init' id='label-job'>
+				<center><h1>Job</h1></center>
+			</div>
+		</div>
+	</div> 
 </body>
 </html>
