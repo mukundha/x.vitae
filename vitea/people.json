@@ -1,0 +1,39 @@
+POST /people
+
+{
+	"name":"Darshan",
+	"email":"Darshan@apigee.com",
+	"password":"apigee",
+	"otherpersonalDetails":"details",
+
+}
+
+POST /people/{:"id"}/workex
+{
+	"Company":"Apigee",
+	"title":"PA",
+	"from":123,
+	"to":456,
+	"OtherDetails":"OtherDetails"
+}
+
+POST /poeple/{id}/skill
+{
+	"name":"Javascript",
+
+}
+or 
+{
+	"skills":
+	[
+	{
+		"name":"Javascript"
+	},
+	{
+		"name":"Java"
+	}
+	
+	]
+	
+
+}
