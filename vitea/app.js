@@ -37,15 +37,27 @@ if ('development' == app.get('env')) {
 }
 
 var client = new usergrid.client ({
-  orgName : 'mindtreeproject-4418',
-  appName : 'tech',
-  //authType : usergrid.AUTH_CLIENT_ID,
-  clientID : 'b3U6vQ6SbKDwEeKC0gLoGsVOBQ',
-  clientSecret :'b3U6_7OAhTTfFJNZNk0o1yrEnmxGEys',
+  orgName : 'x-vitae',
+  appName : 'vitae',
   logging : true,
   buildCurl : false
-
 });
+
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      
+    // intercept OPTIONS method
+    if ('OPTIONS' == req.method) {
+      res.send(200);
+    }
+    else {
+      next();
+    }
+};
+app.use(express.methodOverride());
+app.use(allowCrossDomain);
 
 
 var loadUser = function(req, res, next){
@@ -160,7 +172,7 @@ GET All People Resources.
 */
 
 
-app.get ('/peoples', function(req, res){
+app.get ('/people', function(req, res){
 
   var options = {
     method:'GET',
@@ -739,7 +751,192 @@ app.post('/trans', function(req, res) {
   //res.send('');
 });
 
+
+app.post("/jobs/:jobid/people/:personemail/messages", function (req, res) {
+  
+  getUserId(req.headers.xuser,function(r){
+    if ( !r.err){
+      var from = r.entities[0].uuid;
+      getUserId(req.params.personemail,function(s){
+        if (!s.err){
+          var to = s.entities[0].uuid;
+          var message = req.body.question;
+          createConversationItem(from,to,message,function(p){
+            if (!p.err){
+              var conversationItemid = p.entities[0].uuid;
+              createConversation(function(q){
+                if (!q.err){
+                  var conversationid = q.entities[0].uuid;
+                  linkConversationToConversationItem(conversationid,conversationItemid,function(x){
+                    if (!x.err){
+                      linkJobToConversation(req.params.jobid,conversationid,function(w){
+                        if (!w.err){
+                          res.writeHead(200, {'Content-Type':'application/json'}) ;
+                          res.end(JSON.stringify({"success":"true"}));
+                        }
+                      });
+                    }
+                  });
+                }
+
+              }); 
+            }
+          });
+        }
+      });
+    }
+  });
+});
+
 app.set('title','Vitae');
+
+function internalReq(options,req,res){
+  client.request (options,function(success,response){
+    if (!success){
+      res.writeHead(200, {'Content-Type':'application/json'}) ;
+          res.end(JSON.stringify(response.entities));
+    }else{
+      res.end(JSON.stringify(response));
+    }
+});
+
+}
+
+function getUserId(email,callback){
+
+  var options = {
+      method:'GET',
+      endpoint:'users/'+email
+  };
+  var uuid = client.request (options, function (err, data){
+      if (err){
+        callback({'err':'true'});
+      }
+      else{
+        callback(data);
+        //return r.uuid;
+    }
+  });
+  
+}
+
+
+
+function createConversationItem(from,to,text,callback){
+
+  var item = new Object();
+  item["from"]="/people/"+from;
+  item["to"] = "/people/" + to;
+  item["text"] = text;
+  var options = {
+      'method':'POST',
+      'endpoint':'conversationItems/',
+      'body':item
+
+  };
+  client.request (options, function (err, data){
+      if (err){
+        callback({"err":"true"});
+      }
+      else{
+        callback(data);
+    }
+  });
+  
+}
+
+function createConversation(callback){
+
+  var item = new Object();
+  item["conversationtype"] = 'private';
+  var options = {
+      'method':'POST',
+      'endpoint':'conversations/',
+      'body':item
+
+  };
+  client.request (options, function (err, data){
+      if (err){
+        callback({"err":"true"});
+      }
+      else{
+        callback(data);
+    }
+  });
+  
+}
+
+function linkConversationToConversationItem(conversationid, conversationItemid,callback){
+
+  
+  var options = {
+      'method':'POST',
+      'endpoint':'conversations/'+conversationid+'/has/conversationitems/'+conversationItemid
+  };
+  client.request (options, function (err, data){
+      if (err){
+        callback({"err":"true"});
+      }
+      else{
+        callback(data);
+    }
+  });
+  
+}
+
+function linkJobToConversation(jobid,conversationid,callback){
+
+  
+  var options = {
+      'method':'POST',
+      'endpoint':'jobs/'+jobid+'/has/conversations/'+conversationid
+  };
+  client.request (options, function (err, data){
+      if (err){
+        callback({"err":"true"});
+      }
+      else{
+        callback(data);
+    }
+  });
+  
+}
+
+function linkSentConversation(conversationItemid,from,callback){
+
+  
+  var options = {
+      'method':'POST',
+      'endpoint':'users/'+from+'/sent/conversationitems/'+conversationItemid
+  };
+  client.request (options, function (err, data){
+      if (err){
+        callback({"err":"true"});
+      }
+      else{
+        callback(data);
+    }
+  });
+  
+}
+
+function linkReceivedConversation(conversationItemid,to,callback){
+
+  
+  var options = {
+      'method':'POST',
+      'endpoint':'users/'+to+'/received/conversationitems/'+conversationItemid
+  };
+  client.request (options, function (err, data){
+      if (err){
+        callback({"err":"true"});
+      }
+      else{
+        callback(data);
+    }
+  });
+  
+}
 
 /*
 app.use(function(err,req,res, next){
