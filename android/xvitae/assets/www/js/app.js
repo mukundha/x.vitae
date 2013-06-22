@@ -1,8 +1,10 @@
 var map;
-
-var data = [],
+var ref;
+var host='107.22.68.10';
+var data = [];
+var newwindow;
 series = Math.floor(Math.random() * 6) + 3;
-
+var oAuthTimer;
 for (var i = 0; i < series; i++) {
 	data[i] = {
 			label: "Series" + (i + 1),				
@@ -19,6 +21,19 @@ $(document).ready(function(){
        console.log('push-notification!:'+JSON.stringify(event.notification.message));
        navigator.notification.alert(event.notification.message);
    });
+    
+    $('#btn-login').on('click',function(){
+    	ref = new Date().getTime () ;
+    	queryString = "?8&openid.ns=http://specs.openid.net/auth/2.0&openid.claimed_id=http://specs.openid.net/auth/2.0/identifier_select&openid.identity=http://specs.openid.net/auth/2.0/identifier_select&" +
+        "openid.return_to=http://" + host + "/hack/openid&" +
+		"openid.realm=http://" + host + "/&" +
+		"openid.assoc_handle=" + ref + "&openid.mode=checkid_setup&openid.ax.type.email=http://axschema.org/contact/email&openid.ax.required=email&&openid.ns.ax=http://openid.net/srv/ax/1.0&openid.ax.mode=fetch_request" ;
+    	
+    	var url = "https://www.google.com/accounts/o8/ud" + queryString ;
+    	console.log(url);
+    	newWindow = window.open(url,'_blank','location=no');
+		oAuthTimer = setInterval(function(){embedOAuthWindowTimer()},3000);
+    });
     
 	$('#label-people').on('click',function(){
 		
@@ -314,7 +329,7 @@ function makeAjax (path, method, callback,postdata,needjson){
 			    		var resp = eval("(" + request.responseText + ")")
 			    	}catch(err){
 			    		console.log(request.responseText);
-			    		console.log(err);
+			    		//console.log(err);
 			    		callback({error:true});
 			    	}	
 			    	callback(resp);
@@ -327,4 +342,22 @@ function makeAjax (path, method, callback,postdata,needjson){
 			}
 		}
 }
+
+function embedOAuthWindowTimer() {
+	var url1 = "http://" + host + "/hack/openid?q=" + ref ;
+	makeAjax(url1, "GET", function(resp){
+		console.log(resp);
+		if(resp.user!='none'){
+			newWindow.close();
+			clearInterval(oAuthTimer);
+			$.mobile.changePage('#page-home');
+		}
+		console.log(resp.user);
+	}, null, false);
+	
+    console.log ( "ajax request sent to " + url1 ) ;
+	
+}
+
+
 
