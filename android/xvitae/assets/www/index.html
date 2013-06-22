@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Leaflet Quick Start Guide Example</title>
+	<meta charset="utf-8" />
+
+	<meta name="viewport" content="width=device-width, height=device-height,initial-scale=1.0,maximum-scale=1.0">
+
+	
+	<link rel="stylesheet" href="css/jquery.mobile.min.css" />
+	<link rel="stylesheet" href="css/leaflet.css" />
+	<link rel="stylesheet" href="css/app.css" />
+	<style>
+		#tags-cloud,#flot_piechart {
+			width: 350px;
+			height: 500px;
+		}
+		#piechart {
+			width: 350px;
+			height: 500px;
+		}
+	</style>
+	<!-- <script src='cordova-2.7.0.js'></script> -->
+	<script src="js/jquery.min.js"></script>
+	<script src="js/leaflet.js"></script>
+	
+	
+	<script src='js/jquery.flot.js'></script>
+	<script src='js/jquery.flot.pie.js'></script>
+	<script src="js/jquery.tagcloud.js"></script>
+	<script src="js/app.js"></script>
+	<script src="js/jquery.mobile.min.js"></script>
+	
+	<!--[if lte IE 8]><link rel="stylesheet" href="../dist/leaflet.ie.css" /><![endif]-->
+</head>
+<body>
+	<div data-role='page' id='page-landing'>
+		<div data-role='content' id='content-landing'>
+			<div class='people people-init' id='label-people'>
+				<center><h1>People</h1></center>
+			</div>
+			<div class='job job-init' id='label-job'>
+				<center><h1>Job</h1></center>
+			</div>
+		</div>
+	</div>
+	
+	<div data-role="page" id='page-home'>
+
+		<div data-role='header' id='header-location'>
+			<h2>X Vitae</h2>
+			<div data-role="navbar">
+            <ul>
+                <li><a href="#page-home" id='btn-location' data-icon="grid" class="ui-btn-active">Location</a></li>
+                <li><a href="#page-flot-chart" id='btn-skills' data-icon="star">Skills</a></li>
+                <li><a href="#page-tag-cloud" id='btn-titles' data-icon="gear">Titles</a></li>
+                <li><a href="#page-recommended" id='btn-recommended' data-icon="gear">Recommended</a></li>
+            </ul>
+        	</div>
+		</div>
+		<div data-role="panel" id="panel-location-top-jobs">
+			<div data-role='header'>
+				<h2></h2>
+			</div>
+    		<ul data-role="listview">
+    			<li><a>Chennai</a></li>
+    			<li><a>Hyderabad</a></li>
+    			<li><a>Mumbai</a></li>
+    			<li><a>Pune</a></li>
+    			<li><a>New Delhi</a></li>
+    		</ul>	
+		</div><!-- /panel -->
+		<div data-role='content' id='map'>	
+		</div>
+		<div data-role='footer'>
+			
+		</div>	
+	</div>
+
+	<div data-role="page" id='page-pie-chart'>
+
+		<div data-role='header'>
+			<h2>X Vitae</h2>
+			<div data-role="navbar">
+            <ul>
+                <li><a href="#page-home" id='btn-location' data-icon="grid" class="ui-btn-active">Location</a></li>
+                <li><a href="#page-flot-chart" id='btn-skills' data-icon="star">Skills</a></li>
+                <li><a href="#page-tag-cloud" id='btn-titles' data-icon="gear">Titles</a></li>
+                <li><a href="#page-recommended" id='btn-recommended' data-icon="gear">Recommended</a></li>
+            </ul>
+        	</div>
+		</div>
+		<div data-role='content' >
+			<div id='piechart' >
+			</div>	
+		</div>
+		<div data-role='footer'>
+			
+		</div>	
+	</div>
+
+	<div data-role="page" id='page-flot-chart'>
+		<div data-role='header'>
+			<h2>X Vitae</h2>
+			<div data-role="navbar">
+            <ul>
+                <li><a href="#page-home" id='btn-location' data-icon="grid" class="ui-btn-active">Location</a></li>
+                <li><a href="#page-flot-chart" id='btn-skills' data-icon="star">Skills</a></li>
+                <li><a href="#page-tag-cloud" id='btn-titles' data-icon="gear">Titles</a></li>
+                <li><a href="#page-recommended" id='btn-recommended' data-icon="gear">Recommended</a></li>
+            </ul>
+        	</div>
+		</div>
+		<div data-role='content' >
+			<div id='flot_piechart' >
+			</div>	
+		</div>
+		<div data-role='footer'>
+			
+		</div>	
+	</div>
+	<div data-role="page" id='page-tag-cloud'>
+		<div data-role='header'>
+			<h2>X Vitae</h2>
+			<div data-role="navbar">
+            <ul>
+                <li><a href="#page-home" id='btn-location' data-icon="grid" class="ui-btn-active">Location</a></li>
+                <li><a href="#page-flot-chart" id='btn-skills' data-icon="star">Skills</a></li>
+                <li><a href="#page-tag-cloud" id='btn-titles' data-icon="gear">Titles</a></li>
+                <li><a href="#page-recommended" id='btn-recommended' data-icon="gear">Recommended</a></li>
+            </ul>
+        	</div>
+		</div>
+		<div data-role='content' id="tags-cloud" >
+			<div id='tag-cloud' >
+				<a href="#" rel="7">Solution Architect</a>
+  				<a href="#" rel="3">Software Engineer</a>
+  				<a href="#" rel="10">Architect</a>
+  				<a href="#" rel="5">QA</a>
+  				<a href="#" rel="20">Senior Engineer</a>
+  				<a href="#" rel="10">Principal Engineer</a>
+			</div>	
+		</div>
+		<div data-role='footer'>
+			
+		</div>	
+	</div>
+</body>
+</html>

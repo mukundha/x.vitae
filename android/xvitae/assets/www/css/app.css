@@ -1,0 +1,92 @@
+.people-init{
+	display: block;
+	background: #D0E01B;
+	*font-family: "Helvetica";
+	margin:0px;
+	margin-top: 0px;
+	margin-bottom:0px;
+	margin-left: 0px;
+	margin-right:0px;
+	padding-top:0px;
+	padding-bottom:0px;
+	padding-right:0px;
+	padding-left:0px;
+}
+
+.people{
+	width:100%;
+	height:50%;
+	
+}
+
+.job-init{
+	display: block;
+	background: #CAC0FA;
+	margin:0px;
+	margin-top: 0px;
+	margin-bottom:0px;
+	margin-left: 0px;
+	margin-right:0px;
+	padding:0px;
+	padding-top:0px;
+	padding-bottom:0px;
+	padding-right:0px;
+	padding-left:0px;
+}
+
+.job{
+	width:100%;
+	height:50%;
+}
+
+@keyframes increase_to
+{
+from {height: 50%;}
+to {height: 80%;}
+}
+
+@-webkit-keyframes increase_to /* Safari and Chrome */
+{
+from {height: 50%;}
+to {height: 80%;}
+}
+
+@keyframes decrease_to
+{
+from {height: 50%;}
+to {height: 20%;}
+}
+
+@-webkit-keyframes decrease_to /* Safari and Chrome */
+{
+from {height: 50%;}
+to {height: 20%;}
+}
+
+
+
+.peopleClicked_people
+{
+animation: increase_to 1s;
+-webkit-animation: increase_to 1s; /* Safari and Chrome */
+}
+
+.peopleClicked_job
+{
+animation: decrease_to 1s;
+-webkit-animation: decrease_to 1s; /* Safari and Chrome */
+}
+
+.jobClicked_people
+{
+animation: decrease_to 1s;
+-webkit-animation: decrease_to 1s; /* Safari and Chrome */
+}
+
+.jobClicked_job
+{
+animation: increase_to 1s;
+-webkit-animation: increase_to 1s; /* Safari and Chrome */
+}
+
+
