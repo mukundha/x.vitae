@@ -3,11 +3,15 @@ var ref;
 var host='107.22.68.10';
 var data = [];
 var newwindow;
+var user;
+var deviceId;
+var api= 'http://data-cosafinity.apigee.net:3000/';
 series = Math.floor(Math.random() * 6) + 3;
 var oAuthTimer;
+var skills= ["Java","node","SOA", "API","Dot Net", "Android","Cassandra","Hadoop","Python","Go","Erlang"];
 for (var i = 0; i < series; i++) {
 	data[i] = {
-			label: "Series" + (i + 1),				
+			label: skills[i],				
 			data: Math.floor(Math.random() * 100) + 1
 	}
 }
@@ -17,11 +21,48 @@ $(document).ready(function(){
 
 	document.addEventListener('deviceready', onDeviceReady,false);
     document.addEventListener('push-notification', function(event) {
-    	console.log(JSON.stringify(event));
+    	console.log(event);
        console.log('push-notification!:'+JSON.stringify(event.notification.message));
-       navigator.notification.alert(event.notification.message);
+       //navigator.notification.alert(event.notification.message);
+       var ques = event.notification.message;
+       var to =ques.split(' ')[0];
+       $('#label-question').html(ques);
+       $('#btn-answer').on('click',function(){
+    	  console.log('answered ' + $('#txt-answer').val()); 
+    	  var path = api + "people/" + user + "/people/" + to +"/conversations" ;
+    	  makeAjax(path, "POST", function(resp){
+    		  console.log("answer sent");
+    		  $('#dialog-answer').dialog('close');
+    		  $.mobile.changePage('#page-recommended');
+    		  
+    	  }, JSON.stringify( {question:$('#txt-answer').val()}), false);
+       });
+       
+       $.mobile.changePage('#dialog-answer','pop',true,true);
+       
    });
     
+    $('#btn-apply').on('click',function(){
+    	var jobid = $('#title_job_id').attr('value');
+    	var refid = $('#input-refererid').attr('value');
+    	
+		console.log(jobid);
+		var path = api+'job/'+jobid + "/people/" + refid + "/referral" ;
+		makeAjax(path, "POST", function(applyresponse){
+			console.log('apply success');
+			 $('#dialog-ask-apply').dialog('close');
+   		  $.mobile.changePage('#page-recommended');
+		}, null, false);
+		
+    });
+    
+    $('#page-job-referrers').on ('click',function(){
+    	$('#list-referrers').listview('refresh');
+    });
+    
+    $('#page-myfeed').on('click',function(){
+    	$('#list-myfeed').listview('refresh');	
+    });
     $('#btn-login').on('click',function(){
     	ref = new Date().getTime () ;
     	queryString = "?8&openid.ns=http://specs.openid.net/auth/2.0&openid.claimed_id=http://specs.openid.net/auth/2.0/identifier_select&openid.identity=http://specs.openid.net/auth/2.0/identifier_select&" +
@@ -35,6 +76,56 @@ $(document).ready(function(){
 		oAuthTimer = setInterval(function(){embedOAuthWindowTimer()},3000);
     });
     
+    $('.btn-recommended').on('click',function(){
+    	
+    	var path = api + "jobs" ;
+    	makeAjax(path,"GET", function(data){
+    		console.log("Job response = " + JSON.stringify(data));
+    		console.log(data.entities.length);
+    		var i ;
+    		var it='';
+    		for ( i=0;i<data.entities.length;i++)
+			{
+				var tit = data.entities[i];
+				it += '<li><a href="#" joblink>' + 
+					'<img src="'+ tit.logo+'" class="ui-li-thumb" width="120"/>' + 
+					'<h2>' + tit.title+ '</h2>' + 
+					'<p>' + tit.companyName+ '</p>' + 
+					'<p>'+tit.location+ '</p>' +
+					'<p class="ui-li-aside">'+ tit.experience+'</p></a></li>' ;
+
+		     }
+    		
+    			
+    		console.log(it);
+    		$('#list-jobs').html(it);
+    		$('a[joblink]').on('click',function(e){
+    			var index = $(this).parents('li').eq(0).index();
+		     	console.log(index);
+		     	var selected = data.entities[index];
+		     	
+		     	$('#title_name_h3').html(selected.title);
+		     	$('#title_name_h2').html(selected.title);
+		     	$('#title_image').attr('src',selected.logo);
+		     	$('#title_desc').html(selected.description);
+		     	$('#title_ratings').html ('Experience: ' + selected.experience );
+		     	$('#title_cert').html('Skills: ' + selected.skills );
+		     	$('#title_job_id').attr('value',selected.uuid);
+		     	
+		     	var p = api + "jobs/" + selected.uuid + "/referrers";
+		     	makeAjax(p, "GET", loadReferrers, null, false);
+		     	
+		     	$.mobile.changePage('#page-job-details');
+    		});
+    		//$('#list-jobs').listview('refresh');
+    		$.mobile.changePage('#page-jobs');	
+    	}, null, false);
+    	
+    });
+    
+    $('#page-jobs').on('pageshow',function(){
+    	$('#list-jobs').listview('refresh');
+    });
 	$('#label-people').on('click',function(){
 		
 		$('#label-people').removeClass('jobClicked_people');
@@ -77,7 +168,21 @@ $(document).ready(function(){
 		$('#tags-cloud a').tagcloud();
 	});
 
-	$('#page-home').on('pageinit',function(){
+	$('#btn-askquestion').on('click',function(){
+		var data = $('#txt-question').val();
+		console.log(data);
+		var jobid = $('#title_job_id').attr('value');
+		console.log(jobid);
+		var path = api+'jobs/'+jobid + "/conversations"  ;
+		console.log(path);
+		console.log(data);
+		makeAjax(path, "POST", function(res){
+			console.log('ok - question sent');
+			$('#dialog-ask-apply').dialog('close');
+			$.mobile.changePage('#page-recommended');
+		}, JSON.stringify({question:data}), false);
+	})	;
+	$('#page-myfeed').on('pageinit',function(){
 		console.log('pageinit');
 			setTimeout(function(){
 				console.log('map init');
@@ -183,6 +288,31 @@ $(document).ready(function(){
 	
 });		
 
+function loadReferrers (users){
+		var k;
+		console.log(users);
+		var usershtml = '' ;
+		for(k=0;k<users.entities.length;k++){
+			var us = users.entities[k];
+			usershtml += '<li><a href="#" referrerlink>' + 
+						'<img src="' + us.picture + '" class="ui-li-thumb width="120"/>' +
+						'<h2>' + us.name + '</h2>' + 
+						'<p>' + us.name + '<p>' +
+						'</li>';
+		}
+		
+		$('#list-referrers').html(usershtml);
+		$('a[referrerlink]').on('click',function(){
+			var index = $(this).parents('li').eq(0).index();
+	     	console.log(index);
+	     	var selected = users.entities[index];
+	     	$('#input-refererid').attr('value',selected.uuid);
+	     	$.mobile.changePage('#dialog-ask-apply', 'pop', true, true);
+	     	
+		});
+		
+}
+
 function drawFlotChart(){
 	var placeholder = $('#flot_piechart');
 	placeholder.unbind();
@@ -224,54 +354,7 @@ function drawFlotChart(){
 
 			$.mobile.changePage('#page-flot-chart');
 }
-// function drawGoogleChart(){
-// 	 var data = google.visualization.arrayToDataTable([
-// 				          ['Skill', 'Jobs'],
-// 				          ['Java',     245],
-// 				          ['Middleware',    120],
-// 				          ['.Net',  80],
-// 				          ['Android', 180],
-// 				          ['iOS',    26]
-// 				        ]);
 
-// 				        var options = {
-// 				          title: 'Job Distribution'
-// 				        };
-
-// 				        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-// 				        chart.draw(data, options);
-// 					$.mobile.changePage('#page-pie-chart');
-// }
-
-//function onDeviceReady(){
-//	console.log('device ready');
-//    var pushNotification = window.pushNotification;
-//    var gcmOptions = {
-//        gcmSenderId:"460281438122"
-//    };
-//    pushNotification.registerDevice(gcmOptions, function(device){
-//    	console.log("Registered with Google");
-//        var options = {
-//        		provider:"apigee",
-//                orgName:"mukundha",
-//                appName:"movies",
-//                notifier:"google",
-//            deviceId:device.deviceId
-//        };
-//
-//        console.log("Device ID is " + device.deviceId);
-//        console.log(JSON.stringify(options));
-//        
-//        pushNotification.registerWithPushProvider(options, function(result){
-//        	
-//        	pushNotification.getApigeeDeviceId(function(deviceresult){
-//        		console.log(JSON.stringify(deviceresult));
-//                deviceid =deviceresult.deviceid;
-//                console.log('Got device ID - ' + deviceid);
-//        	});
-//        })
-//    });
-//}
 
 function onDeviceReady(){
 	console.log('device ready');
@@ -281,20 +364,22 @@ function onDeviceReady(){
     };
     pushNotification.registerDevice(gcmOptions, function(device){
     	console.log("Registered with Google");
-        var options = {
-        		provider:"apigee",
-                orgName:"x-vitae",
-                appName:"vitae",
-                notifier:"google",
-            deviceId:device.deviceId
-        };
+//        var options = {
+//        		provider:"apigee",
+//                orgName:"x-vitae",
+//                appName:"vitae",
+//                notifier:"google",
+//            deviceId:device.deviceId
+//        };
 
         console.log("Device ID is " + device.deviceId);
+        deviceId = device.deviceId;
         console.log(JSON.stringify(options));
-        var p = 'http://data-cosafinity.apigee.net:8000/test?notifier=' + device.deviceId;
-        makeAjax(p, "GET", function(resp){
-        	console.log('success');
-        }, null, false);
+        
+//        var p = 'http://data-cosafinity.apigee.net:8000/test?notifier=' + device.deviceId;
+//        makeAjax(p, "GET", function(resp){
+//        	console.log('success');
+//        }, null, false);
         
 //        pushNotification.registerWithPushProvider(options, function(result){
 //        	
@@ -313,7 +398,15 @@ function makeAjax (path, method, callback,postdata,needjson){
 	request.onreadystatechange=state_change;
 	request.open(method, path, true);
 	
-	if ( method=="POST"){
+	if ( user ){
+		console.log('setting user' + user);
+		request.setRequestHeader('xuser',user);
+	}
+	
+	if ( ( method=="POST" || method=="PUT" ) && postdata){
+		request.setRequestHeader('Content-Type',"application/json");
+		console.log("POST Data =" + postdata);
+		
 		request.send(postdata);
 	}else{
 		request.send(null);
@@ -350,7 +443,40 @@ function embedOAuthWindowTimer() {
 		if(resp.user!='none'){
 			newWindow.close();
 			clearInterval(oAuthTimer);
-			$.mobile.changePage('#page-home');
+			$.mobile.loading( 'show', {
+				text: 'Loading feed..',
+				textVisible: true
+				
+			});
+			user= resp.user;
+			console.log(resp);
+			var link = api + 'people/' + user;
+			makeAjax(link+'/feed', "GET", function(resp){
+				console.log(resp);
+				var k;
+				var uhtml='';
+				for(k=0;k<resp.entities.length;k++){
+					var entry = resp.entities[k];
+					uhtml+=
+						'<li><a href="#">' + 
+						'<img src="' + entry.actor.image.url + '" class="ui-li-thumb width="120"/>' +
+						'<h2>' + entry.actor.displayName	 + '</h2>' + 
+						'<p>' + entry.content + '<p>' +
+						'</li>';
+				}
+				$('#list-myfeed').html(uhtml);
+				
+				console.log('feed complete');
+				$.mobile.loading('hide');
+				$.mobile.changePage('#page-myfeed');
+			}, null, false);
+			
+			makeAjax(link, "PUT", function(res){
+				console.log(JSON.stringify(res));
+				
+				
+				
+			}, JSON.stringify({"registration_ids":[deviceId]}), false);
 		}
 		console.log(resp.user);
 	}, null, false);

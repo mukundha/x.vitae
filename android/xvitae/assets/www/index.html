@@ -39,7 +39,16 @@
 </head>
 <body>
 	<div data-role="page" id='page-login'>
+		<div data-role="header">
+			
+		</div>
 		<div data-role="content">
+			<div>
+				<h2>   </h2>
+			</div>
+			<div>
+				<h2>   </h2>
+			</div>
 			<center><a href='#' id='btn-login'><img src="images/rsz_sign-in-with-google.png"></a></center>
 		 </div>
 	</div>
@@ -50,10 +59,11 @@
 			<h2>X Vitae</h2>
 			<div data-role="navbar">
             <ul>
-                <li><a href="#page-home" id='btn-location' data-icon="grid" class="ui-btn-active">Location</a></li>
+            	<li><a href="#page-myfeed" id='btn-feed' data-icon="grid" class="ui-btn-active">My Feed</a></li>
+                <!-- <li><a href="#page-home" id='btn-location' data-icon="grid" class="ui-btn-active">Location</a></li> -->
                 <li><a href="#page-flot-chart" id='btn-skills' data-icon="star">Skills</a></li>
                 <li><a href="#page-tag-cloud" id='btn-titles' data-icon="gear">Titles</a></li>
-                <li><a href="#page-recommended" id='btn-recommended' data-icon="gear">Recommended</a></li>
+                <li><a href="#" class='btn-recommended' data-icon="gear">Recommended</a></li>
             </ul>
         	</div>
 		</div>
@@ -85,7 +95,7 @@
                 <li><a href="#page-home" id='btn-location' data-icon="grid" class="ui-btn-active">Location</a></li>
                 <li><a href="#page-flot-chart" id='btn-skills' data-icon="star">Skills</a></li>
                 <li><a href="#page-tag-cloud" id='btn-titles' data-icon="gear">Titles</a></li>
-                <li><a href="#page-recommended" id='btn-recommended' data-icon="gear">Recommended</a></li>
+                <li><a href="#" class='btn-recommended' data-icon="gear">Recommended</a></li>
             </ul>
         	</div>
 		</div>
@@ -103,10 +113,10 @@
 			<h2>X Vitae</h2>
 			<div data-role="navbar">
             <ul>
-                <li><a href="#page-home" id='btn-location' data-icon="grid" class="ui-btn-active">Location</a></li>
-                <li><a href="#page-flot-chart" id='btn-skills' data-icon="star">Skills</a></li>
+                <li><a href="#page-myfeed" id='btn-myfeed' data-icon="grid" >My Feed</a></li>
+                <li><a href="#page-flot-chart" id='btn-skills'  class="ui-btn-active" data-icon="star">Skills</a></li>
                 <li><a href="#page-tag-cloud" id='btn-titles' data-icon="gear">Titles</a></li>
-                <li><a href="#page-recommended" id='btn-recommended' data-icon="gear">Recommended</a></li>
+                <li><a href="#" class='btn-recommended' data-icon="gear">Recommended</a></li>
             </ul>
         	</div>
 		</div>
@@ -122,11 +132,11 @@
 		<div data-role='header'>
 			<h2>X Vitae</h2>
 			<div data-role="navbar">
-            <ul>
-                <li><a href="#page-home" id='btn-location' data-icon="grid" class="ui-btn-active">Location</a></li>
-                <li><a href="#page-flot-chart" id='btn-skills' data-icon="star">Skills</a></li>
-                <li><a href="#page-tag-cloud" id='btn-titles' data-icon="gear">Titles</a></li>
-                <li><a href="#page-recommended" id='btn-recommended' data-icon="gear">Recommended</a></li>
+             <ul>
+                <li><a href="#page-myfeed" id='btn-myfeed' data-icon="grid" >My Feed</a></li>
+                <li><a href="#page-flot-chart" id='btn-skills'  data-icon="star">Skills</a></li>
+                <li><a href="#page-tag-cloud" id='btn-titles' class="ui-btn-active" data-icon="gear">Titles</a></li>
+                <li><a href="#" class='btn-recommended' data-icon="gear">Recommended</a></li>
             </ul>
         	</div>
 		</div>
@@ -144,6 +154,146 @@
 			
 		</div>	
 	</div>
+	<div data-role='page' id='page-jobs'>
+		<div data-role='header'>
+			<h2>X Vitae</h2>
+			<div data-role="navbar">
+             <ul>
+                <li><a href="#page-myfeed" id='btn-myfeed' data-icon="grid" >My Feed</a></li>
+                <li><a href="#page-flot-chart" id='btn-skills'  data-icon="star">Skills</a></li>
+                <li><a href="#page-tag-cloud" id='btn-titles'  data-icon="gear">Titles</a></li>
+                <li><a href="#" class='btn-recommended' class="ui-btn-active" data-icon="gear">Recommended</a></li>
+            </ul>
+        	</div>
+		</div>
+		<div data-role='content'>
+			<ul data-role='listview' id='list-jobs'>
+			</ul>
+		</div>
+	</div>
+	
+	<div data-role='page' id='page-job-details'>
+		<div data-role='header'>
+			<h2>X Vitae</h2>
+			<div data-role="navbar">
+            <ul>
+                <li><a href="#page-job-details" id='btn-job-detail' data-icon="grid" class="ui-btn-active">Job Details</a></li>
+                <li><a href="#page-job-referrers" id='btn-referral' data-icon="star">Referral</a></li>
+            </ul>
+        	</div>
+		</div>
+		<div data-role='content'>
+			
+			
+				    	<h2/>
+				    	<center><img id='title_image' style='margin: 0 auto' src='http://ia.media-imdb.com/images/M/MV5BMTQxODE3NjM1Ml5BMl5BanBnXkFtZTcwMzkzNjc4OA@@._V1_SY209_CR0,0,140,209_.jpg'/>
+						</center>
+			
+				    	<h2 id="title_name_h2">This is the End</h2>
+				    	<p id="title_desc">While attending a party at James Franco's house, Seth Rogen, Jay Baruchel and many other celebrities are faced with the apocalypse.</p>
+				    	<p id="title_ratings">Ratings: 53/100</p>
+				    	<p id="title_cert">Certificate: PG-13</p>
+						<input id='title_job_id' type='hidden'/>
+			
+			
+				<div class="ui-grid-solo">
+    				<div class="ui-block-a"><a href="#" id='btn-buy' moviedid='' data-role="button">Add To My List</a></div>
+				</div>
+			
+		</div>
+	</div>
+	<div data-role='page' id='page-job-referrers'>
+		<div data-role='header'>
+			<h2>X Vitae</h2>
+			<div data-role="navbar">
+            <ul>
+                <li><a href="#page-job-details" id='btn-job-detail' data-icon="grid" >Job Details</a></li>
+                <li><a href="#page-job-referrers" id='btn-referral' class="ui-btn-active" data-icon="star">Referral</a></li>
+            </ul>
+        	</div>
+		</div>
+		<div data-role='content'>
+			<ul data-role='listview' id='list-referrers'>
+			</ul>			
+		</div>
+	</div>
+	
+	<div data-role="dialog" id="dialog-ask-apply">
+	    <div data-theme="a" data-role="header">
+	        <h3>
+	            X-Vitae
+	        </h3>
+	    </div>
+	    <div data-role="content">
+	        <div data-role="collapsible-set">
+	            <div data-role="collapsible" data-collapsed="false">
+	                <h3>
+	                    Connect
+	                </h3>
+	                <div data-role="fieldcontain">
+	                    <textarea name="" rows="10"  id="txt-question" style='height:120px' placeholder="Enter your question"></textarea>
+	                </div>
+	                <input type="hidden" id="input-refererid"/>
+	                <a data-role="button" id="btn-askquestion">
+	                    Submit
+	                </a>
+	            </div>
+	        </div>
+	        <a data-role="button" href="#" id='btn-apply'>
+	            Apply
+	        </a>
+	    </div>
+	    <div data-theme="a" data-role="footer" data-position="fixed">
+	        <h3>
+	            Footer
+	        </h3>
+	    </div>
+	</div>
+
+	<div data-role="dialog" id="dialog-answer">
+	    <div data-theme="a" data-role="header">
+	        <h3>
+	            X-Vitae
+	        </h3>
+	    </div>
+	    <div data-role="content">
+	                <h3>
+	                    Connect
+	                </h3>
+	                <p id='label-question'></p>
+	                <div data-role="fieldcontain">
+	                    <textarea name="" rows="10"  id="txt-answer" style='height:120px' placeholder="Enter your reply"></textarea>
+	                </div>
+	                <a data-role="button" id="btn-answer">
+	                    Submit
+	                </a>
+	       
+	    </div>
+	    <div data-theme="a" data-role="footer" data-position="fixed">
+	        <h3>
+	            Footer
+	        </h3>
+	    </div>
+	</div>
+	
+	<div data-role='page' id='page-myfeed'>
+	<div data-role='header'>
+			<h2>
+	            X-Vitae
+	        </h2>
+		<div data-role="navbar">
+            <ul>
+                <li><a href="#page-myfeed" id='btn-myfeed' data-icon="grid" class="ui-btn-active">My Feed</a></li>
+                <li><a href="#page-flot-chart" id='btn-skills'  data-icon="star">Skills</a></li>
+                <li><a href="#page-tag-cloud" id='btn-titles' data-icon="gear">Titles</a></li>
+                <li><a href="#" class='btn-recommended' data-icon="gear">Recommended</a></li>
+            </ul>
+        </div>
+        </div>
+		<div data-role='content' id='content-landing'>
+			<ul data-role='listview' id='list-myfeed'></ul>
+		</div>
+	</div> 
 	
 	<div data-role='page' id='page-landing'>
 		<div data-role='content' id='content-landing'>
@@ -155,6 +305,7 @@
 			</div>
 		</div>
 	</div> 
+	
 	 <!-- Place this asynchronous JavaScript just before your </body> tag -->
   
 </body>

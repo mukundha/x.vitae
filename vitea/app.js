@@ -121,7 +121,7 @@ app.post ('/people', function(req, res){
   
   var options = {
     method:'POST',
-    endpoint:'user',
+    endpoint:'users',
     body: payload
   };
 
@@ -144,6 +144,30 @@ app.post ('/people', function(req, res){
   });
 
 });
+
+/**
+Add device notifier
+*/
+app.put('/people/:id',function(req,res){
+
+  var payload = req.body;
+   var options = {
+    method:'PUT',
+    endpoint:'users/'+req.params.id,
+    body: req.body
+  };
+  console.log(JSON.stringify(options));
+  client.request(options,function(err,data){
+    if(err){
+      res.send(400,'{"error":true}');
+    }else{
+      res.send(200,JSON.stringify(data));
+    }
+
+  });
+ 
+});
+
 
 /**
 
@@ -294,6 +318,26 @@ app.get ('/job/:id', function (req, res){
   });
 });
 
+/**
+GET referrers
+*/
+app.get ('/jobs/:id/referrers', function (req, res){
+ var options = {
+   method :'GET',
+   endpoint: 'jobs/'+req.params.id+'/referredby'
+ };
+
+ client.request(options, function(err, data){
+   if (err){
+     res.send(404);
+   }
+   else {
+     res.send(200, data);
+
+   }
+ });
+
+});
 
 /**
 GET skills required by A JOB
@@ -332,12 +376,21 @@ app.get ('/jobs', function (req, res ) {
       res.send(500);
     }
     else {
-      res.send(200, data.entities);
+      res.send(200, data);
     }
 
   });
 });
 
+/**
+get feed
+*/
+ app.get ('/people/:id/feed',function(req,res){
+  var options = {method:'GET', endpoint:'users/' + req.params.id + "/feed"};
+  client.request(options,function(err,data){
+      res.send(200,data);
+  });
+ });
 
 /**
 USER Apply to job
@@ -412,7 +465,7 @@ app.post ( '/job/:id/people/:peopleId/referral', function (req, res){
     }
     else{
       r = data.entities[0];
-      displayName = (r["first-name"]) +" "+(r["last-name"]);
+      displayName = r.name;
       uuid = r.uuid;
       username = r.username;
       email = r.email;
@@ -509,19 +562,68 @@ app.put('/people/:id/referral/:rid', function (req, res) {
 
 
 
+app.post('/people/:from/people/:to/conversations',function(req,res){
+
+    var options = {method:'GET',endpoint:'users/' + req.params.to };
+    client.request(options,function(err, touserdata){
+        if (touserdata.entities[0].registration_ids){
+            var payload = { registration_ids:touserdata.entities[0].registration_ids , data:{data:req.params.from+ " replied. " + req.body.question}};     
+            var options = {
+                       host : 'android.googleapis.com',
+                       path : '/gcm/send',
+                       method: 'POST',
+                       headers: {
+                         'Content-Type': 'application/json',
+                         'Authorization':'key=AIzaSyCDjCcf3_p0g31pYR78mVAQMAcDaqqkHyw'
+
+                       }
+                     };
+             var usergrid_req = https.request(options, function (usergrid_res) {
+                      var output='';
+                       console.log('Status: '+ usergrid_res.statusCode);
+                       console.log('headers' + JSON.stringify(usergrid_res.headers));
+
+                       usergrid_res.setEncoding('utf8');
+
+                       usergrid_res.on('data', function(chunk) {
+                         output+=chunk;
+                         console.log(chunk);
+                       });
+                       usergrid_res.on('end', function (){
+                        
+                         res.send(usergrid_res.statusCode,output);
+                       });
+
+                       usergrid_res.on('error', function(e){
+                         res.send(401);
+                       });
+
+                     });
+                     console.log('USERGRID REQUEST: '+JSON.stringify(payload));
+                     usergrid_req.write(JSON.stringify(payload));
+                     usergrid_req.end();
+        }
+    });
+  
+
+                  
+
+                     
+
+});
 /**
 CREATE Public Message for JOB ID
 */
 
-app.post ('/jobs/:id/conversation', function(req, res){
+app.post ('/jobs/:id/conversations', function(req, res){
 
   //Create a Message
   var options = {
     method: 'POST',
-    endpoint: 'conversation',
+    endpoint: 'conversations',
     body: req.body
   };
-
+  var fromuser = req.headers.xuser;
   client.request(options, function (err, data ){
     if (err){
       res.send(500, 'Could not create conversation.');
@@ -540,7 +642,59 @@ app.post ('/jobs/:id/conversation', function(req, res){
 
         }
         else{
-          res.send(200)
+
+          var op = {method:'GET',endpoint:'jobs/'+req.params.id+ '/connections'} ;
+          client.request(op,function(err,users){
+              //send notifications to users - add to activities
+
+              var x ;
+              for(x=0;x<users.entities.length;x++){
+                var us = users.entities[x];
+                if ( us.type=='user' && us.registration_ids ){
+                  console.log( 'sending notification for ' + us.username)
+                  
+                  var payload = { registration_ids:us.registration_ids , data:{data:fromuser+ " posted a question for you. " + req.body.question}};
+
+                  var options = {
+                       host : 'android.googleapis.com',
+                       path : '/gcm/send',
+                       method: 'POST',
+                       headers: {
+                         'Content-Type': 'application/json',
+                         'Authorization':'key=AIzaSyCDjCcf3_p0g31pYR78mVAQMAcDaqqkHyw'
+
+                       }
+                     };
+
+                     var usergrid_req = https.request(options, function (usergrid_res) {
+                      var output='';
+                       console.log('Status: '+ usergrid_res.statusCode);
+                       console.log('headers' + JSON.stringify(usergrid_res.headers));
+
+                       usergrid_res.setEncoding('utf8');
+
+                       usergrid_res.on('data', function(chunk) {
+                         output+=chunk;
+                         console.log(chunk);
+                       });
+                       usergrid_res.on('end', function (){
+                        
+                         res.send(usergrid_res.statusCode,output);
+                       });
+
+                       usergrid_res.on('error', function(e){
+                         res.send(401);
+                       });
+
+                     });
+                     console.log('USERGRID REQUEST: '+JSON.stringify(payload));
+                     usergrid_req.write(JSON.stringify(payload));
+                     usergrid_req.end();
+                }
+              }
+              res.send(200);
+          });
+          
         }
       });
 
